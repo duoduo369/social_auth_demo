@@ -164,6 +164,7 @@ SOCIAL_AUTH_WEIBO_LOGIN_REDIRECT_URL = 'http://llovebaimuda.herokuapp.com/'
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.contrib.douban.Douban2Backend',
+    'social_auth.backends.contrib.qq.QQBackend',
     'social_auth.backends.contrib.weibo.WeiboBackend',
     # 必须加，否则django默认用户登录不上
     'django.contrib.auth.backends.ModelBackend',
@@ -194,3 +195,6 @@ SOCIAL_AUTH_WEIBO_SECRET = 'aa8626a4396ab90366e51292baeaeb1e'
 
 SOCIAL_AUTH_QQ_KEY = '101145292'
 SOCIAL_AUTH_QQ_SECRET = '993fbbc3c7d9ed0b3a95b613c39f918d'
+
+SOCIAL_AUTH_DOUBAN_OAUTH2_KEY = '0630fb0303a5947e1292f1090af0bd7a'
+SOCIAL_AUTH_DOUBAN_OAUTH2_SECRET = 'e92927cfa3cefe4f'
