@@ -1,6 +1,18 @@
+登录
 <li><a rel="nofollow" href="{% url socialauth_begin 'weibo' %}">weibo</a></li>
 <li><a rel="nofollow" href="{% url socialauth_begin 'qq' %}">qq</a></li>
 <li><a rel="nofollow" href="{% url socialauth_begin 'douban-oauth2' %}">douban</a></li>
-{% for name in social_auth.backends.oauth %}
-  <li><a rel="nofollow" href="{% url socialauth_begin 'name' %}">{{ name|title }}</a></li>
-{% endfor %}
+注销
+<a href="/logout" > 注销 </a>
+<form action="{% url socialauth_disconnect 'weibo' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">weibo</button>
+</form>
+<form action="{% url socialauth_disconnect 'qq' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">qq</button>
+</form>
+<form action="{% url socialauth_disconnect 'douban-oauth2' %}" method="post">
+  {% csrf_token %}
+  <button type="submit">douban-oauth2</button>
+</form>
