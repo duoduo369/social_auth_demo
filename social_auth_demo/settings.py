@@ -182,7 +182,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_uid',
     'social.pipeline.social_auth.auth_allowed',
     'social_auth.backends.pipeline.social.social_auth_user',
-    # 'social_auth.backends.pipeline.associate.associate_by_email',
+
+    'social_auth.backends.pipeline.associate.associate_by_email',
     'social_auth.backends.pipeline.misc.save_status_to_session',
     'social_auth.backends.pipeline.user.create_user',
     'social_auth.backends.pipeline.social.associate_user',
@@ -191,16 +192,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.misc.save_status_to_session',
 )
 
-#SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard'
-#SOCIAL_AUTH_WEIBO_LOGIN_REDIRECT_URL = '/dashboard'
-#SOCIAL_AUTH_QQ_LOGIN_REDIRECT_URL = '/dashboard'
-#SOCIAL_AUTH_DOUBAN_LOGIN_REDIRECT_URL = '/dashboard'
-LOGIN_REDIRECT_URL = 'dashboard'
+SOCIAL_AUTH_LOGIN_URL = '/login-url/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'
-# SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
-# SOCIAL_AUTH_LOGIN_URL = '/login-url/'
 
 SOCIAL_AUTH_WEIBO_KEY = '123592348'
 SOCIAL_AUTH_WEIBO_SECRET = 'aa8626a4396ab90366e51292baeaeb1e'
