@@ -233,3 +233,16 @@ template
 
     AuthAlreadyAssociated at /complete/douban-oauth2/
     This douban-oauth2 account is already in use.
+
+各种重定向的思考
+===
+
+`SOCIAL_AUTH_LOGIN_URL = '/login-url/'`, 暂时没发现什么用
+
+`SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'`, 登录异常，应该引导用户重新去登录
+
+`SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/logged-in/'`, 成功登录页面
+
+`SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'`, django部分新建用户,在这个页面可以引导用户设置邮箱之类的附加信息
+
+`SOCIAL_AUTH_NEW_ASSOCIATION_REDIRECT_URL = '/new-association-redirect-url/'`, django用户新建了一个关联的三方账户，此链接没想出有什么特殊需求，可以直接引导到登录成功页面
