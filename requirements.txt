@@ -1,0 +1,7 @@
+Django==1.4.8
+django-openid-auth==0.4
+django-social-auth==0.8.1
+oauth2==1.5.211
+oauthlib==0.6.2
+python-social-auth==0.1.26
+requests-oauthlib==0.4.1
