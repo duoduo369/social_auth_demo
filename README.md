@@ -1,6 +1,35 @@
 social_auth使用方式
 ===
 
+TODO
+---
+我写这个demo之后, python-social-auth, django-social-auth的作者(一个人),
+对这两个库进行了比较大的更新，pip里面甚至下掉了django-social-auth, 0.8.1这个版本，
+因此让demo能够跑起来，你可能需要用我的两个fork版本.
+
+[python-social_auth一个我的fork版本](https://github.com/duoduo369/python-social-auth)
+
+[django-social-auth一个我的fork版本](https://github.com/duoduo369/django-social-auth)
+
+我已经在requirements.txt中去掉了这两个关键库，请手动clone安装.
+
+注意安装顺序，需要先装python-social-auth, 再装django-social-auth(因为里面的一些依赖我暂时没改)
+
+    git clone https://github.com/duoduo369/python-social-auth.git
+    git clone https://github.com/duoduo369/django-social-auth.git
+
+    cd python-social-auth的目录
+    pip install -e .
+    cd django-social-auth的目录
+    pip install -e .
+
+由于这两个版本还在不定期更新中，因此这个demo过一段时间我会做一次更新，把详细的使用步骤在写进去。
+
+fork版本中提供了里面原来不支持的一些三方backend，现在中国常用的几个backend基本都有了: 微信，微博，qq，人人，豆瓣，百度
+
+Begin
+---
+
 每个网站都需要注册app，这个就不说了
 
 这里以一个heroku的app为例: `http://llovebaimuda.herokuapp.com/`
