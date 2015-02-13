@@ -1,0 +1,2 @@
+-e git+https://github.com/duoduo369/python-social-auth.git@stable_0.1.26.1#egg=python-social-auth-0.126.1
+-e git+https://github.com/duoduo369/django-social-auth.git@stable_0.8.1.1#egg=django-social-auth-0.8.1.1
