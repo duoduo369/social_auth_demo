@@ -1,8 +1,6 @@
 social_auth使用方式
 ===
 
-TODO
----
 我写这个demo之后, python-social-auth, django-social-auth的作者(一个人),
 对这两个库进行了比较大的更新，pip里面甚至下掉了django-social-auth, 0.8.1这个版本，
 因此让demo能够跑起来，你可能需要用我的两个fork版本.
@@ -11,21 +9,53 @@ TODO
 
 [django-social-auth一个我的fork版本](https://github.com/duoduo369/django-social-auth)
 
-我已经在requirements.txt中去掉了这两个关键库，请手动clone安装.
-
-注意安装顺序，需要先装python-social-auth, 再装django-social-auth(因为里面的一些依赖我暂时没改)
-
-    git clone https://github.com/duoduo369/python-social-auth.git
-    git clone https://github.com/duoduo369/django-social-auth.git
-
-    cd python-social-auth的目录
-    pip install -e .
-    cd django-social-auth的目录
-    pip install -e .
-
-由于这两个版本还在不定期更新中，因此这个demo过一段时间我会做一次更新，把详细的使用步骤在写进去。
-
 fork版本中提供了里面原来不支持的一些三方backend，现在中国常用的几个backend基本都有了: 微信，微博，qq，人人，豆瓣，百度
+
+安装
+---
+
+    pip install -r requirements/base.txt
+    ./manage.py syncdb
+
+数据库问题
+---
+这个版本的数据库有的时候不会建立social_auth的几张表，这里给出mysql的建表sql.
+
+    BEGIN;
+        CREATE TABLE `social_auth_usersocialauth` (
+        `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `user_id` integer NOT NULL,
+        `provider` varchar(32) NOT NULL,
+        `uid` varchar(255) NOT NULL,
+        `extra_data` longtext NOT NULL,
+        UNIQUE (`provider`, `uid`)
+        )
+        ;
+        ALTER TABLE `social_auth_usersocialauth` ADD CONSTRAINT `user_id_refs_id_60fa311b` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+        CREATE TABLE `social_auth_nonce` (
+        `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `server_url` varchar(255) NOT NULL,
+        `timestamp` integer NOT NULL,
+        `salt` varchar(40) NOT NULL,
+        UNIQUE (`server_url`, `timestamp`, `salt`)
+        )
+        ;
+        CREATE TABLE `social_auth_association` (
+        `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        `server_url` varchar(255) NOT NULL,
+        `handle` varchar(255) NOT NULL,
+        `secret` varchar(255) NOT NULL,
+        `issued` integer NOT NULL,
+        `lifetime` integer NOT NULL,
+        `assoc_type` varchar(64) NOT NULL,
+        UNIQUE (`server_url`, `handle`)
+        )
+        ;
+        CREATE INDEX `social_auth_usersocialauth_fbfc09f1` ON `social_auth_usersocialauth` (`user_id`);
+        CREATE INDEX `social_auth_nonce_67f1b7ce` ON `social_auth_nonce` (`timestamp`);
+        CREATE INDEX `social_auth_association_5a32b972` ON `social_auth_association` (`issued`);
+        COMMIT;
+
 
 Begin
 ---
@@ -37,7 +67,7 @@ Begin
 注意social_auth的配置方式不能配置回调地址，因此**必须**在各大网站将回调地址设置为`/你的域名/complete/weibo`,
 这里就是`http://llovebaimuda.herokuapp.com/complete/weibo/`,当然不同的网站略有不同。
 
-调试注意! 本地设置hosts
+调试注意! hosts绑定
 ---
 
 windows `%systemroot%\system32\drivers\etc\hosts` 需要在开始菜单找到notepad.exe,右键以管理员身份运行，在打开这个文件修改
@@ -55,6 +85,9 @@ linux `sudo vi /etc/hosts
 新浪
 ---
 
+新浪审核需要你将按钮以及功能都完成后(登录按钮放在回调页面)才能审核通过。
+审核一般1个工作日。
+
 `http://open.weibo.com/webmaster`,下进入你的app
 
 左侧`网站信息`基本信息可以看到域名，app key, app secret
@@ -63,6 +96,10 @@ linux `sudo vi /etc/hosts
 
 qq
 ---
+
+qq审核需要你将按钮以及功能都完成后(登录按钮放在回调页面)才能审核通过。
+审核一般1个工作日。
+
 `http://connect.qq.com/manage/index`,进入你申请开发的app
 
 左侧头像的地方就可以看到 app id, app key
@@ -71,11 +108,27 @@ qq
 
 豆瓣
 ---
+豆瓣不需要功能完成就能审核。
+审核一般3个工作日。
+
 `http://developers.douban.com/apikey/`, 进入你申请开发的app
 
 概览部分可以看到api key和secrect
 
 豆瓣不需要填写回调地址，不过需要添加测试用户，在左侧`测试用户`部分添加用户的豆瓣id
+
+真实的使用代码片段
+===
+
+请查看 snippet文件夹里面的代码
+
+因为我不想要登录成功之后按照python social auth的默认逻辑来（数据库建一个新用户, 我需要填充很多用户信息）
+所以可以看到snippet里面的SOCIAL_AUTH_PIPELINE我只用了几个而已,
+把剩下的灵活操作摘到了snippet/social_oauth/views.py里面处理
+
+因为这个东西实在琐碎，就不细写了，看代码就能知道具体用法。
+
+文档有的时候不靠谱，需要多看几次python-social-auth的源码就理解他的逻辑了。
 
 social_auth的一些配置
 ===
@@ -89,29 +142,13 @@ pipeline
         'social.pipeline.social_auth.social_details',
         'social.pipeline.social_auth.social_uid',
         'social.pipeline.social_auth.auth_allowed',
-        'social_auth.backends.pipeline.social.social_auth_user',
-        # 用户名与邮箱关联，文档说可能出现问题
-        # 'social_auth.backends.pipeline.associate.associate_by_email',
         'social_auth.backends.pipeline.misc.save_status_to_session',
-        'social_auth.backends.pipeline.user.create_user',
-        'social_auth.backends.pipeline.social.associate_user',
-        'social_auth.backends.pipeline.social.load_extra_data',
-        'social_auth.backends.pipeline.user.update_user_details',
-        'social_auth.backends.pipeline.misc.save_status_to_session',
-
     )
 
 你想用哪几种oauth
 
     AUTHENTICATION_BACKENDS = (
         'social_auth.backends.contrib.douban.Douban2Backend',
-        # 注意这个比较特殊,因为django-social-auth是依赖python-social-auth的
-        # python-social-auth==0.1.26,已经包含的qq的backend
-        # django-social-auth==0.8.1, 还没包含进来
-        # 你需要在django-social-auth/social_auth/backends/contrib中添加一个文件qq.py
-        # 就一行
-        # from social.backends.qq import QQOAuth2 as QQBackend
-        # 然后setup一下就ok
         'social_auth.backends.contrib.qq.QQBackend',
         'social_auth.backends.contrib.weibo.WeiboBackend',
         # 必须加，否则django默认用户登录不上
@@ -122,9 +159,6 @@ pipeline
 
     TEMPLATE_CONTEXT_PROCESSORS = (
         'django.contrib.auth.context_processors.auth',
-        # login 在template中可以用 "{% url socialauth_begin 'douban-oauth2' %}"
-        'social_auth.context_processors.social_auth_by_type_backends',
-        'social_auth.context_processors.social_auth_login_redirect',
     )
 
 各种重定向连接
@@ -161,9 +195,9 @@ template
 注意实现一下/logout的方法，用django自带的即可
 
     登录
-    <li><a rel="nofollow" href="{% url socialauth_begin 'weibo' %}">weibo</a></li>
-    <li><a rel="nofollow" href="{% url socialauth_begin 'qq' %}">qq</a></li>
-    <li><a rel="nofollow" href="{% url socialauth_begin 'douban-oauth2' %}">douban</a></li>
+    <li><a rel="nofollow" href="/login/weibo/">weibo</a></li>
+    <li><a rel="nofollow" href="/login/qq/">qq</a></li>
+    <li><a rel="nofollow" href="/login/douban-oauth2/">douban</a></li>
     注销
     <a href="/logout" > 注销 </a>
 
