@@ -1,6 +1,12 @@
 social_auth使用方式
 ===
 
+2016-04-15正确的姿势
+---
+正确的姿势请参考[文章](https://segmentfault.com/a/1190000004947540),[代码](https://github.com/duoduo369/weixin_server/tree/feature/myauth), 分之为myauth
+
+以前的readme继续
+---
 我写这个demo之后, python-social-auth, django-social-auth的作者(一个人),
 对这两个库进行了比较大的更新，pip里面甚至下掉了django-social-auth, 0.8.1这个版本，
 因此让demo能够跑起来，你可能需要用我的两个fork版本.
